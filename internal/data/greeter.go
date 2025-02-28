@@ -2,6 +2,8 @@ package data
 
 import (
 	"context"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
 
 	"server/internal/biz"
 
@@ -22,6 +24,13 @@ func NewGreeterRepo(data *Data, logger log.Logger) biz.GreeterRepo {
 }
 
 func (r *greeterRepo) Save(ctx context.Context, g *biz.Greeter) (*biz.Greeter, error) {
+	_, span := otel.Tracer("greeter").Start(ctx, "Save")
+	defer span.End()
+	span.SetAttributes(attribute.KeyValue{
+		Key:   "name",
+		Value: attribute.StringValue(g.Hello),
+	})
+	span.AddEvent("save greeter")
 	return g, nil
 }
 

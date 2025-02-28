@@ -10,6 +10,7 @@ import (
 	"server/internal/biz"
 	"server/internal/conf"
 	"server/internal/data"
+	"server/internal/dep"
 	"server/internal/server"
 	"server/internal/service"
 
@@ -26,7 +27,7 @@ func wireApp(context.Context, *conf.Bootstrap, *conf.Server, *conf.Data, log.Log
 			data.ProviderSet,
 			biz.ProviderSet,
 			service.ProviderSet,
-			//dep.DepProviderSet,
+			dep.DepProviderSet,
 			newApp,
 		),
 	)

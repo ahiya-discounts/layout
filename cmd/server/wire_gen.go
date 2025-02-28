@@ -13,6 +13,7 @@ import (
 	"server/internal/biz"
 	"server/internal/conf"
 	"server/internal/data"
+	"server/internal/dep"
 	"server/internal/server"
 	"server/internal/service"
 )
@@ -32,8 +33,32 @@ func wireApp(contextContext context.Context, bootstrap *conf.Bootstrap, confServ
 	greeterRepo := data.NewGreeterRepo(dataData, logger)
 	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
 	greeterService := service.NewGreeterService(greeterUsecase)
-	grpcServer := server.NewGRPCServer(confServer, greeterService, logger)
-	httpServer := server.NewHTTPServer(confServer, greeterService, logger)
+	meterProvider, err := dep.NewMeterProvider(bootstrap)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	meter, err := dep.NewMeter(bootstrap, meterProvider)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	textMapPropagator := dep.NewTextMapPropagator()
+	tracerProvider, err := dep.NewTracerProvider(contextContext, bootstrap, textMapPropagator)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	grpcServer, err := server.NewGRPCServer(confServer, greeterService, logger, meter, tracerProvider)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	httpServer, err := server.NewHTTPServer(confServer, greeterService, logger, meter, tracerProvider)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
 	app := newApp(logger, grpcServer, httpServer)
 	return app, func() {
 		cleanup()
