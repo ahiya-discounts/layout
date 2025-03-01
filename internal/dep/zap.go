@@ -19,6 +19,7 @@ type ZapLogger struct {
 
 // NewZapLogger return a zap logger.
 func NewZapLogger(encoder zapcore.EncoderConfig, level zap.AtomicLevel, opts ...zap.Option) *ZapLogger {
+
 	core := zapcore.NewCore(
 		zapcore.NewConsoleEncoder(encoder),
 		zapcore.NewMultiWriteSyncer(
@@ -36,18 +37,25 @@ func (l *ZapLogger) Log(level log.Level, keyvals ...interface{}) error {
 	}
 	// Zap.Field is used when keyvals pairs appear
 	var data []zap.Field
+	var msg string
 	for i := 0; i < len(keyvals); i += 2 {
-		data = append(data, zap.Any(fmt.Sprint(keyvals[i]), fmt.Sprint(keyvals[i+1])))
+		if keyvals[i] == "msg" {
+			msg = fmt.Sprint(keyvals[i+1])
+		} else {
+			data = append(data, zap.Any(fmt.Sprint(keyvals[i]), fmt.Sprint(keyvals[i+1])))
+		}
 	}
+	data = append(data, zap.String("logger", "zap"))
+
 	switch level {
 	case log.LevelDebug:
-		l.log.Debug("", data...)
+		l.log.Debug(msg, data...)
 	case log.LevelInfo:
-		l.log.Info("", data...)
+		l.log.Info(msg, data...)
 	case log.LevelWarn:
-		l.log.Warn("", data...)
+		l.log.Warn(msg, data...)
 	case log.LevelError:
-		l.log.Error("", data...)
+		l.log.Error(msg, data...)
 	}
 	return nil
 }

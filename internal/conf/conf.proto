@@ -38,8 +38,13 @@ message Otel{
 }
 
 message Log{
+  enum Logger {
+    ZAP = 0;
+    LOGRUS = 1;
+  }
   string level = 1;
   string filepath = 2;
+  string logger = 3;
 }
 
 message Server {

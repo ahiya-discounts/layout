@@ -23,5 +23,7 @@ otel:
   metrics:
     enable_exemplar: true
 log:
+  # zap | logrus
+  logger: zap
   level: debug
   filepath: ""

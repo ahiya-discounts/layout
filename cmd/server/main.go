@@ -4,8 +4,6 @@ import (
 	"context"
 	"flag"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"os"
 	"server/internal/dep"
 
@@ -72,18 +70,8 @@ func main() {
 	}
 
 	// init logger
-	level := zap.NewAtomicLevelAt(zap.DebugLevel)
-	lg := dep.NewZapLogger(zapcore.EncoderConfig{
-		MessageKey:    "msg",
-		LevelKey:      "level",
-		TimeKey:       "ts",
-		NameKey:       "name",
-		CallerKey:     "caller",
-		FunctionKey:   "fn",
-		StacktraceKey: "stack",
-	}, level)
+	lg := dep.NewLogger(&bc)
 	logger := log.With(lg,
-		"ts", log.DefaultTimestamp,
 		"caller", log.DefaultCaller,
 		"service.id", id,
 		"service.name", Name,
@@ -95,13 +83,14 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	log.NewHelper(logger).Debug("Wiring app")
 	app, cleanup, err := wireApp(ctx, &bc, bc.Server, bc.Data, logger)
 	if err != nil {
 		panic(err)
 	}
 	defer cleanup()
 
-	// start and wait for stop signal
+	log.NewHelper(logger).Debug("Starting Server")
 	if err := app.Run(); err != nil {
 		panic(err)
 	}
