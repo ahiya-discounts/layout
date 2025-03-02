@@ -6,7 +6,8 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/trace"
-	v1 "server/api/helloworld/v1"
+	helloV1 "server/api/helloworld/v1"
+	usersV1 "server/api/users/v1"
 	"server/internal/conf"
 	"server/internal/service"
 
@@ -15,7 +16,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 )
 
-func NewGRPCServer(c *conf.Server, greeter *service.GreeterService, logger log.Logger, meter metric.Meter, tp trace.TracerProvider) (*grpc.Server, error) {
+func NewGRPCServer(c *conf.Server, greeter *service.GreeterService, users *service.UsersService, logger log.Logger, meter metric.Meter, tp trace.TracerProvider) (*grpc.Server, error) {
 	counter, err := metrics.DefaultRequestsCounter(meter, metrics.DefaultServerRequestsCounterName)
 	if err != nil {
 		return nil, err
@@ -47,6 +48,7 @@ func NewGRPCServer(c *conf.Server, greeter *service.GreeterService, logger log.L
 		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
 	}
 	srv := grpc.NewServer(opts...)
-	v1.RegisterGreeterServer(srv, greeter)
+	helloV1.RegisterGreeterServer(srv, greeter)
+	usersV1.RegisterUsersServer(srv, users)
 	return srv, nil
 }

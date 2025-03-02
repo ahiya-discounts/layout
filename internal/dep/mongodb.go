@@ -10,8 +10,8 @@ import (
 )
 
 type Mongo struct {
-	db     *mongo.Database
-	logger log.Logger
+	DB     *mongo.Database
+	Logger log.Logger
 }
 
 func connMongo(c *conf.Data, logger log.Logger, database string) (*mongo.Database, *mongo.Client, error) {
@@ -74,7 +74,7 @@ func NewMongo(c *conf.Data, logger log.Logger) (*Mongo, func(), error) {
 
 	log.NewHelper(logger).Info("connected to database successfully")
 	return &Mongo{
-		db:     db,
-		logger: logger,
+		DB:     db,
+		Logger: logger,
 	}, cleanup, nil
 }

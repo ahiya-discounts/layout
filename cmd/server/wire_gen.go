@@ -26,13 +26,21 @@ import (
 
 // wireApp init kratos application.
 func wireApp(contextContext context.Context, bootstrap *conf.Bootstrap, confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
-	dataData, cleanup, err := data.NewData(confData, logger)
+	textMapPropagator := dep.NewTextMapPropagator()
+	tracerProvider, err := dep.NewTracerProvider(contextContext, bootstrap, textMapPropagator)
+	if err != nil {
+		return nil, nil, err
+	}
+	dataData, cleanup, err := data.NewData(confData, logger, tracerProvider)
 	if err != nil {
 		return nil, nil, err
 	}
 	greeterRepo := data.NewGreeterRepo(dataData, logger)
 	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
 	greeterService := service.NewGreeterService(greeterUsecase)
+	usersRepo := data.NewUsersRepo(dataData)
+	usersUsecase := biz.NewUsersUsecase(usersRepo, logger)
+	usersService := service.NewUsersService(usersUsecase, logger)
 	meterProvider, err := dep.NewMeterProvider(bootstrap)
 	if err != nil {
 		cleanup()
@@ -43,18 +51,12 @@ func wireApp(contextContext context.Context, bootstrap *conf.Bootstrap, confServ
 		cleanup()
 		return nil, nil, err
 	}
-	textMapPropagator := dep.NewTextMapPropagator()
-	tracerProvider, err := dep.NewTracerProvider(contextContext, bootstrap, textMapPropagator)
+	grpcServer, err := server.NewGRPCServer(confServer, greeterService, usersService, logger, meter, tracerProvider)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
-	grpcServer, err := server.NewGRPCServer(confServer, greeterService, logger, meter, tracerProvider)
-	if err != nil {
-		cleanup()
-		return nil, nil, err
-	}
-	httpServer, err := server.NewHTTPServer(confServer, greeterService, logger, meter, tracerProvider)
+	httpServer, err := server.NewHTTPServer(confServer, greeterService, usersService, logger, meter, tracerProvider)
 	if err != nil {
 		cleanup()
 		return nil, nil, err

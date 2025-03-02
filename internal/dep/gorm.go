@@ -15,8 +15,8 @@ import (
 
 type Gorm struct {
 	// TODO wrapped database client
-	db     *gorm.DB
-	logger log.Logger
+	DB     *gorm.DB
+	Logger log.Logger
 }
 
 func openDB(c *conf.Data) (*gorm.DB, error) {
@@ -37,9 +37,6 @@ func openDB(c *conf.Data) (*gorm.DB, error) {
 }
 
 func NewGorm(c *conf.Data, logger log.Logger, tp trace.TracerProvider) (*Gorm, func(), error) {
-	cleanup := func() {
-		log.NewHelper(logger).Info("closing the data resources")
-	}
 	db, err := openDB(c)
 	if err != nil {
 		return nil, nil, err
@@ -51,11 +48,14 @@ func NewGorm(c *conf.Data, logger log.Logger, tp trace.TracerProvider) (*Gorm, f
 		panic(err)
 	}
 
+	cleanup := func() {
+		log.NewHelper(logger).Info("closing gorm data resources")
+	}
+
 	return &Gorm{
-		db:     db,
-		logger: logger,
+		DB:     db,
+		Logger: logger,
 	}, cleanup, nil
-	return nil, nil, nil
 }
 
 func GormMigrate(ctx context.Context, c *conf.Data, logger log.Logger, models ...interface{}) {

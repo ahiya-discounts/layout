@@ -5,6 +5,7 @@ import (
 	"flag"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"os"
+	"server/internal/data"
 	"server/internal/dep"
 
 	"server/internal/conf"
@@ -89,6 +90,8 @@ func main() {
 		panic(err)
 	}
 	defer cleanup()
+
+	dep.GormMigrate(ctx, bc.Data, logger, &data.Users{})
 
 	log.NewHelper(logger).Debug("Starting Server")
 	if err := app.Run(); err != nil {
