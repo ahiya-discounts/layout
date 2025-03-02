@@ -12,7 +12,7 @@ type LogrusLogger struct {
 	Logger *logrus.Logger
 }
 
-func NewLogrusLogger(c *conf.Bootstrap) log.Logger {
+func NewLogrusLogger(c *conf.Bootstrap) *LogrusLogger {
 	var formatter logrus.Formatter
 	txtFmt := &logrus.TextFormatter{
 		ForceQuote:       true,
