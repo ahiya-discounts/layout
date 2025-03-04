@@ -9,6 +9,7 @@ import (
 	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/trace"
 	helloV1 "server/api/helloworld/v1"
+	productsV1 "server/api/products/v1"
 	usersV1 "server/api/users/v1"
 	"server/internal/conf"
 	"server/internal/service"
@@ -18,7 +19,15 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 )
 
-func NewHTTPServer(c *conf.Server, greeter *service.GreeterService, users *service.UsersService, logger log.Logger, meter metric.Meter, tp trace.TracerProvider) (*http.Server, error) {
+func NewHTTPServer(
+	c *conf.Server,
+	greeter *service.GreeterService,
+	users *service.UsersService,
+	products *service.ProductsService,
+	logger log.Logger,
+	meter metric.Meter,
+	tp trace.TracerProvider,
+) (*http.Server, error) {
 	counter, err := metrics.DefaultRequestsCounter(meter, metrics.DefaultServerRequestsCounterName)
 	if err != nil {
 		return nil, err
@@ -59,5 +68,6 @@ func NewHTTPServer(c *conf.Server, greeter *service.GreeterService, users *servi
 
 	helloV1.RegisterGreeterHTTPServer(srv, greeter)
 	usersV1.RegisterUsersHTTPServer(srv, users)
+	productsV1.RegisterProductsHTTPServer(srv, products)
 	return srv, nil
 }

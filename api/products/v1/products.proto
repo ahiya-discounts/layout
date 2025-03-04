@@ -20,7 +20,6 @@ service Products {
     option (google.api.http) = {
       get: "/products/{id}"
     };
-    option (google.api.method_signature) = "id";
   }
   rpc ListProducts (ListProductsRequest) returns (ListProductsResponse) {
     option (google.api.http) = {
@@ -102,6 +101,8 @@ message UpdateProductRequest {
   optional string category = 5;
   repeated string tags = 6;
   map<string, string> attributes = 7;
+  optional string thumbnail = 8;
+  repeated string images = 9;
 }
 
 message UpdateProductResponse {

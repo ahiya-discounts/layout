@@ -13,6 +13,11 @@ data:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
+  mongo:
+    uri: mongodb://localhost:27017
+    database: products
+    password: root
+    username: root
 metadata:
   name: layout
   env: dev

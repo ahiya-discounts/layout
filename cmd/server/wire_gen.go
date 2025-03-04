@@ -41,6 +41,9 @@ func wireApp(contextContext context.Context, bootstrap *conf.Bootstrap, confServ
 	usersRepo := data.NewUsersRepo(dataData)
 	usersUsecase := biz.NewUsersUsecase(usersRepo, logger)
 	usersService := service.NewUsersService(usersUsecase, logger)
+	productsRepo := data.NewProductsRepo(dataData)
+	productsUsecase := biz.NewProductsUsecase(productsRepo, logger)
+	productsService := service.NewProductsService(productsUsecase, logger)
 	meterProvider, err := dep.NewMeterProvider(bootstrap)
 	if err != nil {
 		cleanup()
@@ -51,12 +54,12 @@ func wireApp(contextContext context.Context, bootstrap *conf.Bootstrap, confServ
 		cleanup()
 		return nil, nil, err
 	}
-	grpcServer, err := server.NewGRPCServer(confServer, greeterService, usersService, logger, meter, tracerProvider)
+	grpcServer, err := server.NewGRPCServer(confServer, greeterService, usersService, productsService, logger, meter, tracerProvider)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
-	httpServer, err := server.NewHTTPServer(confServer, greeterService, usersService, logger, meter, tracerProvider)
+	httpServer, err := server.NewHTTPServer(confServer, greeterService, usersService, productsService, logger, meter, tracerProvider)
 	if err != nil {
 		cleanup()
 		return nil, nil, err

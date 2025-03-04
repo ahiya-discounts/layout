@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   pg:
@@ -16,4 +16,3 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-      MONGO_INITDB_DATABASE: products

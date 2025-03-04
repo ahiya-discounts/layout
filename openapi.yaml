@@ -3,9 +3,153 @@
 
 openapi: 3.0.3
 info:
-    title: Users API
+    title: ""
     version: 0.0.1
 paths:
+    /helloworld/{name}:
+        get:
+            tags:
+                - Greeter
+            description: Sends a greeting
+            operationId: Greeter_SayHello
+            parameters:
+                - name: name
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/helloworld.v1.HelloReply'
+    /products:
+        get:
+            tags:
+                - Products
+            operationId: Products_ListProducts
+            parameters:
+                - name: pagination.page
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pagination.pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/products.v1.ListProductsResponse'
+        post:
+            tags:
+                - Products
+            operationId: Products_CreateProduct
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/products.v1.CreateProductRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/products.v1.CreateProductResponse'
+    /products/search:
+        get:
+            tags:
+                - Products
+            operationId: Products_SearchProducts
+            parameters:
+                - name: query
+                  in: query
+                  schema:
+                    type: string
+                - name: pagination.page
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pagination.pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/products.v1.SearchProductsResponse'
+    /products/{id}:
+        get:
+            tags:
+                - Products
+            operationId: Products_GetProduct
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/products.v1.GetProductResponse'
+        delete:
+            tags:
+                - Products
+            operationId: Products_DeleteProduct
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/products.v1.DeleteProductResponse'
+        patch:
+            tags:
+                - Products
+            operationId: Products_UpdateProduct
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/products.v1.UpdateProductRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/products.v1.UpdateProductResponse'
     /users:
         get:
             tags:
@@ -48,13 +192,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ListUsersResponse'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
+                                $ref: '#/components/schemas/users.v1.ListUsersResponse'
         post:
             tags:
                 - Users
@@ -63,7 +201,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/CreateUserRequest'
+                            $ref: '#/components/schemas/users.v1.CreateUserRequest'
                 required: true
             responses:
                 "200":
@@ -71,13 +209,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/CreateUserResponse'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
+                                $ref: '#/components/schemas/users.v1.CreateUserResponse'
     /users/search:
         get:
             tags:
@@ -104,13 +236,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/SearchUsersResponse'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
+                                $ref: '#/components/schemas/users.v1.SearchUsersResponse'
     /users/{id}:
         get:
             tags:
@@ -128,13 +254,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/GetUserResponse'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
+                                $ref: '#/components/schemas/users.v1.GetUserResponse'
         delete:
             tags:
                 - Users
@@ -151,13 +271,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/DeleteUserResponse'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
+                                $ref: '#/components/schemas/users.v1.DeleteUserResponse'
         patch:
             tags:
                 - Users
@@ -172,7 +286,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdateUserRequest'
+                            $ref: '#/components/schemas/users.v1.UpdateUserRequest'
                 required: true
             responses:
                 "200":
@@ -180,61 +294,66 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/UpdateUserResponse'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
+                                $ref: '#/components/schemas/users.v1.UpdateUserResponse'
 components:
     schemas:
-        CreateUserRequest:
+        helloworld.v1.HelloReply:
             type: object
             properties:
-                username:
+                message:
                     type: string
-                email:
-                    type: string
-                phone:
-                    type: string
-                password:
-                    type: string
-                picture:
-                    type: string
-        CreateUserResponse:
+            description: The response message containing the greetings
+        products.v1.CreateProductRequest:
             type: object
             properties:
-                id:
+                name:
                     type: string
-        DeleteUserResponse:
-            type: object
-            properties:
-                id:
+                description:
                     type: string
-        GetUserResponse:
-            type: object
-            properties:
-                user:
-                    $ref: '#/components/schemas/User'
-        GoogleProtobufAny:
-            type: object
-            properties:
-                '@type':
+                price:
+                    type: number
+                    format: float
+                category:
                     type: string
-                    description: The type of the serialized message.
-            additionalProperties: true
-            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
-        ListUsersResponse:
-            type: object
-            properties:
-                users:
+                tags:
                     type: array
                     items:
-                        $ref: '#/components/schemas/User'
+                        type: string
+                attributes:
+                    type: object
+                    additionalProperties:
+                        type: string
+                thumbnail:
+                    type: string
+                images:
+                    type: array
+                    items:
+                        type: string
+        products.v1.CreateProductResponse:
+            type: object
+            properties:
+                id:
+                    type: string
+        products.v1.DeleteProductResponse:
+            type: object
+            properties:
+                id:
+                    type: string
+        products.v1.GetProductResponse:
+            type: object
+            properties:
+                product:
+                    $ref: '#/components/schemas/products.v1.Product'
+        products.v1.ListProductsResponse:
+            type: object
+            properties:
+                products:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/products.v1.Product'
                 pagination:
-                    $ref: '#/components/schemas/Pagination'
-        Pagination:
+                    $ref: '#/components/schemas/products.v1.Pagination'
+        products.v1.Pagination:
             type: object
             properties:
                 page:
@@ -243,32 +362,132 @@ components:
                 pageSize:
                     type: integer
                     format: int32
-        SearchUsersResponse:
+        products.v1.Product:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                description:
+                    type: string
+                price:
+                    type: number
+                    format: float
+                category:
+                    type: string
+                tags:
+                    type: array
+                    items:
+                        type: string
+                attributes:
+                    type: object
+                    additionalProperties:
+                        type: string
+                thumbnail:
+                    type: string
+                images:
+                    type: array
+                    items:
+                        type: string
+        products.v1.SearchProductsResponse:
+            type: object
+            properties:
+                products:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/products.v1.Product'
+                pagination:
+                    $ref: '#/components/schemas/products.v1.Pagination'
+        products.v1.UpdateProductRequest:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                description:
+                    type: string
+                price:
+                    type: number
+                    format: float
+                category:
+                    type: string
+                tags:
+                    type: array
+                    items:
+                        type: string
+                attributes:
+                    type: object
+                    additionalProperties:
+                        type: string
+                thumbnail:
+                    type: string
+                images:
+                    type: array
+                    items:
+                        type: string
+        products.v1.UpdateProductResponse:
+            type: object
+            properties:
+                id:
+                    type: string
+        users.v1.CreateUserRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                email:
+                    type: string
+                phone:
+                    type: string
+                password:
+                    type: string
+                picture:
+                    type: string
+        users.v1.CreateUserResponse:
+            type: object
+            properties:
+                id:
+                    type: string
+        users.v1.DeleteUserResponse:
+            type: object
+            properties:
+                id:
+                    type: string
+        users.v1.GetUserResponse:
+            type: object
+            properties:
+                user:
+                    $ref: '#/components/schemas/users.v1.User'
+        users.v1.ListUsersResponse:
             type: object
             properties:
                 users:
                     type: array
                     items:
-                        $ref: '#/components/schemas/User'
+                        $ref: '#/components/schemas/users.v1.User'
                 pagination:
-                    $ref: '#/components/schemas/Pagination'
-        Status:
+                    $ref: '#/components/schemas/users.v1.Pagination'
+        users.v1.Pagination:
             type: object
             properties:
-                code:
+                page:
                     type: integer
-                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
                     format: int32
-                message:
-                    type: string
-                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
-                details:
+                pageSize:
+                    type: integer
+                    format: int32
+        users.v1.SearchUsersResponse:
+            type: object
+            properties:
+                users:
                     type: array
                     items:
-                        $ref: '#/components/schemas/GoogleProtobufAny'
-                    description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
-            description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
-        UpdateUserRequest:
+                        $ref: '#/components/schemas/users.v1.User'
+                pagination:
+                    $ref: '#/components/schemas/users.v1.Pagination'
+        users.v1.UpdateUserRequest:
             type: object
             properties:
                 id:
@@ -283,12 +502,12 @@ components:
                     type: string
                 picture:
                     type: string
-        UpdateUserResponse:
+        users.v1.UpdateUserResponse:
             type: object
             properties:
                 id:
                     type: string
-        User:
+        users.v1.User:
             type: object
             properties:
                 id:
@@ -304,4 +523,7 @@ components:
                 picture:
                     type: string
 tags:
+    - name: Greeter
+      description: The greeting service definition.
+    - name: Products
     - name: Users
